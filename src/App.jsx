@@ -1,86 +1,32 @@
-import React, { useState, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SourceTextAreaComponent from "./components/SourceTextAreaComponent";
 import TranslatedTextAreaComponent from "./components/TranslatedTextAreaComponent";
-import { ArrowRight } from "lucide-react";
+import {
+  translate
+} from "./store/translationSlice";
 
 const App = () => {
   const [sourceText, setSourceText] = useState("");
-  const [translatedText, setTranslatedText] = useState("");
-  const [isTranslating, setIsTranslating] = useState(false);
-  const [error, setError] = useState(null);
-  // const [sourceLanguage, setSourceLanguage] = useState("en");
-  // const [targetLanguage, setTargetLanguage] = useState("de");
+  const error = useSelector((state) => state.translationState.error);
 
-  const RAPIDAPI_KEY = import.meta.env.VITE_RAPID_API_KEY;
-
-  const translateText = async (text) => {
-    const url =
-      "https://google-translate113.p.rapidapi.com/api/v1/translator/text";
-    const options = {
-      method: "POST",
-      headers: {
-        "x-rapidapi-key": RAPIDAPI_KEY,
-        "x-rapidapi-host": "google-translate113.p.rapidapi.com",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: "en",
-        to: "de",
-        text: text,
-      }),
-    };
-    if (!text.trim()) return "";
-
-    setIsTranslating(true);
-    setError(null);
-
-    try {
-      const response = await fetch(url, options);
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
-
-      if (data && data.trans) {
-        return data.trans;
-      } else {
-        throw new Error("Invalid response format");
-      }
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-      setIsTranslating(false);
-    } finally {
-      setIsTranslating(false);
-    }
-  };
+  const dispatch = useDispatch();
 
   const handleTranslate = async () => {
     if (!sourceText.trim()) return;
-
-    const result = await translateText(sourceText);
-    setTranslatedText(result);
+    dispatch(translate(sourceText));
   };
 
-  // const handleSwapLanguages = () => {
-  //   setSourceLanguage(targetLanguage);
-  //   setTargetLanguage(sourceLanguage);
-  //   setSourceText(translatedText);
-  //   setTranslatedText(sourceText);
-  // };
+
 
   const handleClear = () => {
     setSourceText("");
-    setTranslatedText("");
   };
 
   const handleCopyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
-      // Show feedback (could add toast notification in a real app)
-      console.log("Copied to clipboard");
+ 
     });
   };
 
@@ -92,12 +38,11 @@ const App = () => {
           <h1 className="text-2xl font-bold text-gray-800">Translation</h1>
         </div>
 
-        {/* Language Selection */}
+        {/* Language slection default english */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-2">
             <select
               value="en"
-              // onChange={(e) => setSourceLanguage(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled>
               <option value="en">English</option>
@@ -121,27 +66,40 @@ const App = () => {
           </div>
         </div>
 
-        {/* Translation Input/Output */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Source Text Area */}
-
+          {/* Source language in this case english */}
           <SourceTextAreaComponent
             handleClear={handleClear}
-            isTranslating={isTranslating}
             setSourceText={setSourceText}
             sourceText={sourceText}
             handleCopyToClipboard={handleCopyToClipboard}
-            translatedText={translatedText}
           />
-          {/* Translated Text Area */}
+          {/* Translated language text area w/c is german */}
           <TranslatedTextAreaComponent
             handleCopyToClipboard={handleCopyToClipboard}
-            translatedText={translatedText}
           />
-          <button onClick={handleTranslate}>translate</button>
+          <button
+            onClick={handleTranslate}
+            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center space-x-2 shadow-md">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+              />
+            </svg>
+            <span>Translate</span>
+            
+          </button>
         </div>
 
-        {/* Error Message */}
+        {/* Error message if there is any error */}
         {error && (
           <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
             {error}

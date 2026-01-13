@@ -4,15 +4,20 @@ import {
   Volume2,
   X
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 function SourceTextAreaComponent({
   sourceText,
   setSourceText,
-  isTranslating,
+  // isTranslating,
   handleClear,
   handleCopyToClipboard,
   translatedText,
-}) {
+} ) {
+  const isTranslating = useSelector(
+    (store) => store.translationState.isTranslating
+  );
+  console.log(isTranslating)
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
       <div className="relative">

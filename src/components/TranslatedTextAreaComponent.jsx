@@ -8,10 +8,14 @@ import {
   ThumbsDown,
   X,
 } from "lucide-react";
+import store from "../store/translationSlice";
+import { useSelector } from "react-redux";
 function TranslatedTextAreaComponent ( {
-  translatedText,
+
   handleCopyToClipboard,
-}) {
+} ) {
+  const translatedText = useSelector( ( store ) => store.translationState.translatedText );
+  console.log(translatedText)
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
       <div className="relative">
