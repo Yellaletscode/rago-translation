@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SourceTextAreaComponent from "./components/SourceTextAreaComponent";
 import TranslatedTextAreaComponent from "./components/TranslatedTextAreaComponent";
@@ -8,7 +8,8 @@ import {
 } from "./store/translationSlice";
 
 const App = () => {
-  const [sourceText, setSourceText] = useState("");
+  const [sourceText, setSourceText] = useState( "" );
+  const [autoTranslate, setAutoTranslate] = useState(false);
   const error = useSelector((state) => state.translationState.error);
 
   const dispatch = useDispatch();
@@ -29,6 +30,23 @@ const App = () => {
  
     });
   };
+  useEffect( () => {
+    if (  sourceText.trim() ) {
+      const timer = setTimeout( () => {
+        handleTranslate();
+      }, 500 );
+      return () => clearTimeout(timer);
+    }
+  },[sourceText,autoTranslate])
+
+   const handleAutoTranslateChange = (e) => {
+     setAutoTranslate(e.target.checked);
+
+     // If user checks the auto-translate checkbox and there's text, translate immediately
+     if (e.target.checked && sourceText.trim()) {
+       handleTranslate();
+     }
+   };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
@@ -48,22 +66,41 @@ const App = () => {
               <option value="en">English</option>
             </select>
             <button
-              // onClick={handleSwapLanguages}
+
               className="p-2 text-gray-600 hover:text-blue-600 transition-colors">
               <ArrowRight className="w-5 h-5 rotate-90" />
             </button>
             <select
-              // value={targetLanguage}
-              // onChange={(e) => setTargetLanguage(e.target.value)}
+
               className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled>
               <option value="de">German</option>
             </select>
           </div>
-
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
-            <span>Automatic</span>
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <label className="flex items-center cursor-pointer">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={autoTranslate}
+                  onChange={handleAutoTranslateChange}
+                  className="sr-only"
+                />
+                <div
+                  className={`w-10 h-6 rounded-full transition-colors ${
+                    autoTranslate ? "bg-blue-600" : "bg-gray-300"
+                  }`}>
+                  <div
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+                      autoTranslate ? "left-5" : "left-1"
+                    }`}></div>
+                </div>
+              </div>
+              <span className="ml-2 font-medium">Automatic</span>
+            </label>
           </div>
+
+
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -78,7 +115,8 @@ const App = () => {
           <TranslatedTextAreaComponent
             handleCopyToClipboard={handleCopyToClipboard}
           />
-          <button
+
+{      !autoTranslate &&     <button
             onClick={handleTranslate}
             className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center space-x-2 shadow-md">
             <svg
@@ -95,8 +133,7 @@ const App = () => {
               />
             </svg>
             <span>Translate</span>
-            
-          </button>
+          </button>}
         </div>
 
         {/* Error message if there is any error */}
