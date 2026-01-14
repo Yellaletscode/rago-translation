@@ -14,7 +14,10 @@ function TranslatedTextAreaComponent ( {
 
   handleCopyToClipboard,
 } ) {
-  const translatedText = useSelector( ( store ) => store.translationState.translatedText );
+const { translatedText, isTranslating, error } = useSelector(
+  (state) => state.translationState
+);
+
   console.log(translatedText)
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">

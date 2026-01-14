@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SourceTextAreaComponent from "./components/SourceTextAreaComponent";
 import TranslatedTextAreaComponent from "./components/TranslatedTextAreaComponent";
-import {
-  translate
-} from "./store/translationSlice";
+import { translate } from "./store/translationSlice";
 
 const App = () => {
-  const [sourceText, setSourceText] = useState( "" );
-  const [autoTranslate, setAutoTranslate] = useState(false);
-  const error = useSelector((state) => state.translationState.error);
-
+  const [sourceText, setSourceText] = useState("");
+  const [autoTranslate, setAutoTranslate] = useState(true);
+  // const error = useSelector((state) => state.translationState.error);
+const {  error } = useSelector(
+  (state) => state.translationState
+);
   const dispatch = useDispatch();
 
   const handleTranslate = async () => {
@@ -19,34 +19,25 @@ const App = () => {
     dispatch(translate(sourceText));
   };
 
-
-
   const handleClear = () => {
     setSourceText("");
   };
 
   const handleCopyToClipboard = (text) => {
-    navigator.clipboard.writeText(text).then(() => {
- 
-    });
+    navigator.clipboard.writeText(text).then(() => {});
   };
-  useEffect( () => {
-    if (  sourceText.trim() ) {
-      const timer = setTimeout( () => {
+  useEffect(() => {
+    if (!autoTranslate || !sourceText.trim()) return;
+      const timer = setTimeout(() => {
         handleTranslate();
-      }, 500 );
+      }, 500);
       return () => clearTimeout(timer);
-    }
-  },[sourceText,autoTranslate])
+    
+  }, [sourceText, autoTranslate]);
 
-   const handleAutoTranslateChange = (e) => {
-     setAutoTranslate(e.target.checked);
-
-     // If user checks the auto-translate checkbox and there's text, translate immediately
-     if (e.target.checked && sourceText.trim()) {
-       handleTranslate();
-     }
-   };
+  const handleAutoTranslateChange = (e) => {
+    setAutoTranslate(e.target.checked);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
@@ -65,13 +56,10 @@ const App = () => {
               disabled>
               <option value="en">English</option>
             </select>
-            <button
-
-              className="p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <button className="p-2 text-gray-600 hover:text-blue-600 transition-colors">
               <ArrowRight className="w-5 h-5 rotate-90" />
             </button>
             <select
-
               className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled>
               <option value="de">German</option>
@@ -99,8 +87,6 @@ const App = () => {
               <span className="ml-2 font-medium">Automatic</span>
             </label>
           </div>
-
-
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -116,24 +102,26 @@ const App = () => {
             handleCopyToClipboard={handleCopyToClipboard}
           />
 
-{      !autoTranslate &&     <button
-            onClick={handleTranslate}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center space-x-2 shadow-md">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
-              />
-            </svg>
-            <span>Translate</span>
-          </button>}
+          {!autoTranslate && (
+            <button
+              onClick={handleTranslate}
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center space-x-2 shadow-md">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
+                />
+              </svg>
+              <span>Translate</span>
+            </button>
+          )}
         </div>
 
         {/* Error message if there is any error */}

@@ -1,28 +1,24 @@
-import {
-  Copy,
-  RefreshCw,
-  Volume2,
-  X
-} from "lucide-react";
+import { Copy, RefreshCw, Volume2, X } from "lucide-react";
 import { useSelector } from "react-redux";
 
 function SourceTextAreaComponent({
   sourceText,
   setSourceText,
-  // isTranslating,
+
   handleClear,
   handleCopyToClipboard,
-  translatedText,
-} ) {
+}) {
   const isTranslating = useSelector(
     (store) => store.translationState.isTranslating
   );
-  console.log(isTranslating)
+  const { translatedText } = useSelector((state) => state.translationState);
+  console.log(isTranslating);
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
       <div className="relative">
         <textarea
           value={sourceText}
+          data-testid="source-textarea"
           onChange={(e) => setSourceText(e.target.value)}
           placeholder="Enter text to translate..."
           className="w-full h-64 p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
