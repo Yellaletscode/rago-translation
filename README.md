@@ -57,42 +57,44 @@ A simple, modern, and responsive **English → German** translator with **automa
    git clone https://github.com/Yellaletscode/rago-translation.git
    cd rago-translation
 
-
-2. 🌍 Language Translator App
-
-A modern language translation web app built with React + Vite, powered by Google Translate API via RapidAPI. The app features fast translations, clean UI, and scalable state management using Redux Toolkit.
-
-🚀 Getting Started
-1️⃣ Install Dependencies
+2. **Install dependencies**
+```bash
 npm install
 # or
+```bash
 yarn install
-
-2️⃣ Add Your RapidAPI Key
-
-Create a .env file in the root folder and add:
-
+Add your RapidAPI key
+3. **Create a file named .env in the root folder:**
 VITE_RAPID_API_KEY=your_rapidapi_key_here
-
-
-🔑 Get your API key here:
-https://rapidapi.com/googletranslateapi/api/google-translate113
-
-⚠️ Important:
-Environment variables in Vite must start with VITE_
-
-3️⃣ Start Development Server
+→ Get your key here: https://rapidapi.com/googletranslateapi/api/google-translate113
+4. **Start development server**
+```bash
 npm run dev
+```
 # or
+```bash
 yarn dev
-
-
-Open your browser at:
-
-http://localhost:5173
-
-
-(or the port shown in your terminal)
-
-4️⃣ Build for Production (Optional)
+```
+Open http://localhost:5173 (or the port shown)
+Build for production (optional)
+```bash
 npm run build
+```
+**Important Note:**
+Without a valid VITE_RAPID_API_KEY in .env, translations will fail and show error messages.
+Technologies Used
+Frontend: React + Vite
+State Management: Redux Toolkit (with createAsyncThunk)
+Styling: Tailwind CSS
+Icons: Lucide React
+Testing: Jest + React Testing Library
+Deployment: Vercel
+Future Improvements (Planned)
+Support more language pairs
+Implement text-to-speech (listen button)
+Add swap source/target functionality
+Support dark mode
+Improve error handling & retry mechanism
+### License
+MIT License — feel free to use, modify, and distribute!
+
