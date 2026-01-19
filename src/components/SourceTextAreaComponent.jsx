@@ -1,25 +1,19 @@
 import { Copy, RefreshCw, Volume2, X } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSourceText } from "../store/translationSlice";
 
-function SourceTextAreaComponent({
-  sourceText,
-  setSourceText,
-
-  handleClear,
-  handleCopyToClipboard,
-}) {
-  const isTranslating = useSelector(
-    (store) => store.translationState.isTranslating
+function SourceTextAreaComponent({ handleClear, handleCopyToClipboard }) {
+  const { translatedText, isTranslating, sourceText } = useSelector(
+    (store) => store.translationState,
   );
-  const { translatedText } = useSelector((state) => state.translationState);
-  console.log(isTranslating);
+  const dispatch = useDispatch();
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
       <div className="relative">
         <textarea
           value={sourceText}
           data-testid="source-textarea"
-          onChange={(e) => setSourceText(e.target.value)}
+          onChange={(e) => dispatch(setSourceText(e.target.value))}
           placeholder="Enter text to translate..."
           className="w-full h-64 p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
         />

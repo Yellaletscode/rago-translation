@@ -56,13 +56,15 @@ A simple, modern, and responsive **English → German** translator with **automa
    ```bash
    git clone https://github.com/Yellaletscode/rago-translation.git
    cd rago-translation
-
+```
 2. **Install dependencies**
 ```bash
 npm install
+```
 # or
 ```bash
 yarn install
+```
 Add your RapidAPI key
 3. **Create a file named .env in the root folder:**
 VITE_RAPID_API_KEY=your_rapidapi_key_here

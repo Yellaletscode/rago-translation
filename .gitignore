@@ -26,3 +26,4 @@ dist-ssr
 #enviroment
 .env
 src/store/storev1.js
+src/store/translationSlice_v2.js

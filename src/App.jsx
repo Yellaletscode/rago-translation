@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SourceTextAreaComponent from "./components/SourceTextAreaComponent";
 import TranslatedTextAreaComponent from "./components/TranslatedTextAreaComponent";
-import { translate } from "./store/translationSlice";
+import { toggleAutoTranslation, translate } from "./store/translationSlice";
 
 const App = () => {
-  const [sourceText, setSourceText] = useState("");
-  const [autoTranslate, setAutoTranslate] = useState(true);
+  const [ setSourceText] = useState("");
+
   // const error = useSelector((state) => state.translationState.error);
-const {  error } = useSelector(
-  (state) => state.translationState
-);
+  const { error, isAutoTranslationEnabled, sourceText } = useSelector(
+    (state) => state.translationState,
+  );
   const dispatch = useDispatch();
 
   const handleTranslate = async () => {
@@ -27,16 +27,15 @@ const {  error } = useSelector(
     navigator.clipboard.writeText(text).then(() => {});
   };
   useEffect(() => {
-    if (!autoTranslate || !sourceText.trim()) return;
-      const timer = setTimeout(() => {
-        handleTranslate();
-      }, 500);
-      return () => clearTimeout(timer);
-    
-  }, [sourceText, autoTranslate]);
+    if (!isAutoTranslationEnabled || !sourceText.trim()) return;
+    const timer = setTimeout(() => {
+      handleTranslate();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [sourceText, isAutoTranslationEnabled]);
 
   const handleAutoTranslateChange = (e) => {
-    setAutoTranslate(e.target.checked);
+    dispatch(toggleAutoTranslation)
   };
 
   return (
@@ -70,17 +69,17 @@ const {  error } = useSelector(
               <div className="relative">
                 <input
                   type="checkbox"
-                  checked={autoTranslate}
+                  checked={isAutoTranslationEnabled}
                   onChange={handleAutoTranslateChange}
                   className="sr-only"
                 />
                 <div
                   className={`w-10 h-6 rounded-full transition-colors ${
-                    autoTranslate ? "bg-blue-600" : "bg-gray-300"
+                    isAutoTranslationEnabled ? "bg-blue-600" : "bg-gray-300"
                   }`}>
                   <div
                     className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
-                      autoTranslate ? "left-5" : "left-1"
+                      isAutoTranslationEnabled ? "left-5" : "left-1"
                     }`}></div>
                 </div>
               </div>
@@ -102,7 +101,7 @@ const {  error } = useSelector(
             handleCopyToClipboard={handleCopyToClipboard}
           />
 
-          {!autoTranslate && (
+          {!isAutoTranslationEnabled && (
             <button
               onClick={handleTranslate}
               className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 flex items-center space-x-2 shadow-md">
