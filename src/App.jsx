@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SourceTextAreaComponent from "./components/SourceTextAreaComponent";
 import TranslatedTextAreaComponent from "./components/TranslatedTextAreaComponent";
-import { toggleAutoTranslation, translate } from "./store/translationSlice";
+import { toggleAutoTranslation } from "./store/translationSlice";
+import { translate } from "./services/translationService";
 
 const App = () => {
-  const [ setSourceText] = useState("");
+  const [setSourceText] = useState("");
 
   // const error = useSelector((state) => state.translationState.error);
   const { error, isAutoTranslationEnabled, sourceText } = useSelector(
@@ -35,7 +36,11 @@ const App = () => {
   }, [sourceText, isAutoTranslationEnabled]);
 
   const handleAutoTranslateChange = (e) => {
-    dispatch(toggleAutoTranslation)
+    dispatch(toggleAutoTranslation());
+
+    if (isAutoTranslationEnabled) {
+      handleTranslate();
+    }
   };
 
   return (
